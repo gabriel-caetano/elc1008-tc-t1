@@ -7,5 +7,5 @@ class head:
     def get_position(self):
         return self.__position
     
-    def ser_position(self, new_position):
-        self.__position = new_position
+    def move(self, value):
+        self.__position += value
