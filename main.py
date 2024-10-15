@@ -1,8 +1,10 @@
 from turing_machine import turing_machine 
+from reversible_turing_machine import reversible_turing_machine 
 
 def main():
     tm = turing_machine('entrada-quintupla.txt')
-    print(tm.execute())
+    rtm = reversible_turing_machine(tm)
+    print(rtm.execute())
 
 
 if __name__ == "__main__":

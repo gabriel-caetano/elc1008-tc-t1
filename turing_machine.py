@@ -10,12 +10,14 @@ class turing_machine:
     __num_input_symbols: int
     __num_tape_symbols: int
     __num_transitions: int
+    #
     __states: str
-    __init_state: str
     __accept_state: str
     __curr_state: str
+    #
     __input_alphabet: str
     __output_alphabet: str
+    #
     __transitions: array
     __tape_input: tape
     __head: head
@@ -25,6 +27,82 @@ class turing_machine:
         self.__head = head()
         self.load_file()
         
+
+    def set_num_states(self, val):
+        self.__num_states = val
+        
+    def get_num_states(self):
+        return self.__num_states
+
+    def set_num_input_symbols(self, val):
+        self.__num_input_symbols = val
+        
+    def get_num_input_symbols(self):
+        return self.__num_input_symbols
+
+    def set_num_tape_symbols(self, val):
+        self.__num_tape_symbols = val
+        
+    def get_num_tape_symbols(self):
+        return self.__num_tape_symbols
+
+    def set_num_transitions(self, val):
+        self.__num_transitions = val
+        
+    def get_num_transitions(self):
+        return self.__num_transitions
+    #
+
+    def set_states(self, val):
+        self.__states = val
+    
+    def get_states(self):
+        return self.__states
+
+    def set_accept_state(self, val):
+        self.__accept_state = val
+        
+    def get_accept_state(self):
+        return self.__accept_state
+
+    def set_curr_state(self, val):
+        self.__curr_state = val
+        
+    def get_curr_state(self):
+        return self.__curr_state
+    #
+
+    def set_input_alphabet(self, val):
+        self.__input_alphabet = val
+    
+    def get_input_alphabet(self):
+        return self.__input_alphabet
+
+    def set_output_alphabet(self, val):
+        self.__output_alphabet = val
+        
+    def get_output_alphabet(self):
+        return self.__output_alphabet
+    #
+
+    def set_transitions(self, val):
+        self.__transitions = val
+    
+    def get_transitions(self):
+        return self.__transitions
+
+    def set_tape_input(self, val):
+        self.__tape_input = val
+        
+    def get_tape_input(self):
+        return self.__tape_input
+
+    def set_head(self, val):
+        self.__head = val
+        
+    def get_head(self):
+        return self.__head
+
     def __load_file_header(self, file):
         first_line = file.readline().strip().split()
         self.__num_states = int(first_line[0])
@@ -32,12 +110,10 @@ class turing_machine:
         self.__num_tape_symbols = int(first_line[2]) 
         self.__num_transitions = int(first_line[3])
         self.__states = file.readline().strip().split()
-        self.__curr_state = self.__init_state = self.__states[0]
+        self.__curr_state = self.__states[0]
         self.__accept_state = self.__states[-1]
         self.__input_alphabet = file.readline().strip().split()
         self.__output_alphabet = file.readline().strip().split()
-        # load info from header of the file 
-        pass
 
     def __load_file_transitions(self, file):
         transitions = []
@@ -45,13 +121,10 @@ class turing_machine:
             line = file.readline().strip()
             transitions.append(transition(line))
         self.__transitions = transitions
-        # while transitions, read and load
-        pass
 
     def __load_input(self, file):
         self.__tape_input = tape(file.readline().strip())
         pass
-
 
     def load_file(self):
         print("opening... " + self.__file_name)
