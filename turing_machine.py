@@ -63,14 +63,13 @@ class turing_machine:
     def execute(self):
         while True:
             curr_state = self.__curr_state
-            print(f"estado atual: {curr_state}")
             head_position = self.__head.get_position()
             if (curr_state == self.__accept_state):
                 break
             if (head_position >= self.__tape_input.get_size()):
                 return "acabou a fita"
             curr_symbol = self.__tape_input.read_symbol(head_position)
-            print(f"simbolo atual: {curr_symbol}")
+            print(f"estado atual: {curr_state}, simbolo atual: {curr_symbol}, posição atual: {head_position}")
             curr_transition = list(filter(
                 lambda trans:
                     trans.get_curr_state() == curr_state and
@@ -82,13 +81,12 @@ class turing_machine:
             if not curr_transition:
                 return "estado não existe"
             self.__tape_input.write_symbol(head_position, curr_transition.get_write_symbol())
-            print(f"move head: {curr_transition.get_move_head()}")
             self.__head.move(curr_transition.get_move_head())
             self.__curr_state = curr_transition.get_next_state()
             self.__tape_input.print()
 
     
-        return True
+        return "aceito"
 
     def print(self):
         print(f"num states: {self.__num_states}")

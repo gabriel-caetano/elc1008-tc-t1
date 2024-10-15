@@ -1,7 +1,7 @@
 from turing_machine import turing_machine 
 
 def main():
-    tm = turing_machine('test.txt')
+    tm = turing_machine('entrada-quintupla.txt')
     print(tm.execute())
 
 
