@@ -3,8 +3,7 @@ class tape:
     __size = 0
     def __init__(self, string: str):
         self.__size = len(string)
-        for c in string:
-            self.__tape.append(c)
+        self.__tape = [x for x in string]
 
     def read_symbol(self, index):
         return self.__tape[index]
@@ -15,5 +14,8 @@ class tape:
     def write_symbol(self, index, symbol):
         self.__tape[index] = symbol
 
-    def print(self):
-        print(self.__tape)
+    def getString(self):
+        return ''.join(self.__tape)
+    
+    def __str__(self):
+        return f"{self.__tape}"

@@ -32,5 +32,5 @@ class transition:
         
         return 0
     
-    def print(self):
-        print(f"({self.__curr_state},{self.__curr_symbol})->({self.__next_state},{self.__write_symbol},{self.__move_head})")
+    def __str__(self):
+        return f"({self.__curr_state},{self.__curr_symbol})->({self.__next_state},{self.__write_symbol},{self.__move_head})"

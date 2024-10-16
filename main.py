@@ -4,7 +4,10 @@ from reversible_turing_machine import reversible_turing_machine
 def main():
     tm = turing_machine('entrada-quintupla.txt')
     rtm = reversible_turing_machine(tm)
-    print(rtm.execute())
+    print(tm)
+    # print(tm.execute())
+    # print('##### end of tm #####')
+    # print(rtm.execute())
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ class turing_machine:
     __output_alphabet: str
     #
     __transitions: array
-    __tape_input: tape
+    __input_tape: tape
     __head: head
 
     def __init__(self, file_name) -> None:
@@ -91,11 +91,11 @@ class turing_machine:
     def get_transitions(self):
         return self.__transitions
 
-    def set_tape_input(self, val):
-        self.__tape_input = val
+    def set_input_tape(self, val):
+        self.__input_tape = val
         
-    def get_tape_input(self):
-        return self.__tape_input
+    def get_input_tape(self):
+        return self.__input_tape
 
     def set_head(self, val):
         self.__head = val
@@ -123,7 +123,7 @@ class turing_machine:
         self.__transitions = transitions
 
     def __load_input(self, file):
-        self.__tape_input = tape(file.readline().strip())
+        self.__input_tape = tape(file.readline().strip())
         pass
 
     def load_file(self):
@@ -139,9 +139,9 @@ class turing_machine:
             head_position = self.__head.get_position()
             if (curr_state == self.__accept_state):
                 break
-            if (head_position >= self.__tape_input.get_size()):
+            if (head_position >= self.__input_tape.get_size()):
                 return "acabou a fita"
-            curr_symbol = self.__tape_input.read_symbol(head_position)
+            curr_symbol = self.__input_tape.read_symbol(head_position)
             print(f"estado atual: {curr_state}, simbolo atual: {curr_symbol}, posição atual: {head_position}")
             curr_transition = list(filter(
                 lambda trans:
@@ -150,26 +150,30 @@ class turing_machine:
                 self.__transitions
             ))[0]
             print(f"transição atual:")
-            curr_transition.print()
             if not curr_transition:
                 return "estado não existe"
-            self.__tape_input.write_symbol(head_position, curr_transition.get_write_symbol())
+            self.__input_tape.write_symbol(head_position, curr_transition.get_write_symbol())
             self.__head.move(curr_transition.get_move_head())
             self.__curr_state = curr_transition.get_next_state()
-            self.__tape_input.print()
+            print(self.__input_tape)
 
     
         return "aceito"
 
-    def print(self):
-        print(f"num states: {self.__num_states}")
-        print(f"num input symbol: {self.__num_input_symbols}")
-        print(f"num tape symbols: {self.__num_tape_symbols}")
-        print(f"num transitions: {self.__num_transitions}")
-        print(f"states: {self.__states}")
-        print(f"input alphabet: {self.__input_alphabet}")
-        print(f"tape alphabet: {self.__output_alphabet}")
-        print("transitions: ")
+    def __str__(self):
+        res = f"""num states: {self.__num_states}
+num input symbol: {self.__num_input_symbols}
+num tape symbols: {self.__num_tape_symbols}
+num transitions: {self.__num_transitions}
+states: {self.__states}
+input alphabet: {self.__input_alphabet}
+tape alphabet: {self.__output_alphabet}
+transitions: [
+"""
         for t in self.__transitions:
-            t.print()
-        self.__tape_input.print()
+            res = res + f"  {t.__str__()},\n"
+
+        res = res + f"""]
+input tape: {self.__input_tape}
+"""
+        return res
