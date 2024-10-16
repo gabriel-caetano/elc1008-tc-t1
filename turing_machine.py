@@ -174,6 +174,5 @@ transitions: [
             res = res + f"  {t.__str__()},\n"
 
         res = res + f"""]
-input tape: {self.__input_tape}
-"""
+input tape: {self.__input_tape}"""
         return res
