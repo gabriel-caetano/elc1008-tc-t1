@@ -135,6 +135,9 @@ class turing_machine:
 
     def execute(self):
         while True:
+            # comment here for continuous execution
+            input("Enter for next step...")
+            
             curr_state = self.__curr_state
             head_position = self.__head.get_position()
             if (curr_state == self.__accept_state):
