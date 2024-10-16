@@ -9,7 +9,7 @@ class reversible_turing_machine:
     __num_tape_symbols: int
     __num_transitions: int
     #
-    __states: str
+    __states: array
     __accept_state: str
     __curr_state: str
     #
@@ -40,13 +40,16 @@ class reversible_turing_machine:
         for t in quintuples:
             # Criando o estado temporário único
             temp_state = f"T{t.get_curr_state()}_{t.get_curr_symbol()}"
-
+            self.__states.append(temp_state)
+            self.__num_states += 1
+            self.__num_transitions += 1
             # Criando as duas quádruplas a partir da quíntupla
             # Leitura e escrita
-            quad_1_str = f"({t.get_curr_state()},{t.get_curr_symbol()})=({temp_state},{t.get_write_symbol()},_))"
+            move_head = 'R' if t.get_move_head() == 1 else ('L' if t.get_move_head() == -1 else '_')
+            quad_1_str = f"({t.get_curr_state()},{t.get_curr_symbol()})=({temp_state},{t.get_write_symbol()},_)"
             quad_1 = transition(quad_1_str)  
             # Movimentação da cabeça
-            quad_2_str = f"({temp_state},/)=({t.get_next_state()},{t.get_curr_symbol()},{t.get_move_head()}))"
+            quad_2_str = f"({temp_state},/)=({t.get_next_state()},/,{move_head})"
             quad_2 = transition(quad_2_str)
 
             quadruples.append(quad_1)
@@ -64,22 +67,26 @@ class reversible_turing_machine:
                 return "acabou a fita"
             curr_symbol = self.__tape_input.read_symbol(head_position)
             print(f"estado atual: {curr_state}, simbolo atual: {curr_symbol}, posição atual: {head_position}")
+            for t in self.__transitions:
+                t.print()
             curr_transition = list(filter(
                 lambda t:
                     t.get_curr_state() == curr_state and
-                    t.get_curr_symbol() == curr_symbol,
+                    (t.get_curr_symbol() == curr_symbol or
+                    t.get_curr_symbol() == '/'),
                 self.__transitions
             ))[0]
             print(f"transição atual:")
             curr_transition.print()
             if not curr_transition:
                 return "estado não existe"
-            self.__tape_input.write_symbol(head_position, curr_transition.get_write_symbol())
+            if curr_transition.get_write_symbol() != '/':
+                self.__tape_input.write_symbol(head_position, curr_transition.get_write_symbol())
+            
             self.__head.move(curr_transition.get_move_head())
             self.__curr_state = curr_transition.get_next_state()
             self.__tape_input.print()
 
-    
         return "aceito"
 
     def print(self):
@@ -91,6 +98,6 @@ class reversible_turing_machine:
         print(f"input alphabet: {self.__input_alphabet}")
         print(f"tape alphabet: {self.__output_alphabet}")
         print("transitions: ")
-        for i in range(len(self.__transitions)):
-            self.__transitions[i].print()
+        for t in self.__transitions:
+            t.print()
         self.__tape_input.print()

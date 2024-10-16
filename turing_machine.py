@@ -11,7 +11,7 @@ class turing_machine:
     __num_tape_symbols: int
     __num_transitions: int
     #
-    __states: str
+    __states: array
     __accept_state: str
     __curr_state: str
     #
@@ -170,6 +170,6 @@ class turing_machine:
         print(f"input alphabet: {self.__input_alphabet}")
         print(f"tape alphabet: {self.__output_alphabet}")
         print("transitions: ")
-        for i in range(len(self.__transitions)):
-            self.__transitions[i].print()
+        for t in self.__transitions:
+            t.print()
         self.__tape_input.print()

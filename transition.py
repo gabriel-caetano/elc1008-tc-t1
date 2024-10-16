@@ -7,11 +7,9 @@ class transition:
     __move_head: str
 
     def __init__(self, transition_string):
-        self.__curr_state = transition_string[1]
-        self.__curr_symbol = transition_string[3]
-        self.__next_state = transition_string[7]
-        self.__write_symbol = transition_string[9]
-        self.__move_head = transition_string[11]
+        left, right = transition_string.split('=')
+        self.__curr_state, self.__curr_symbol = left.strip()[1:-1].split(',')
+        self.__next_state, self.__write_symbol, self.__move_head = right.strip()[1:-1].split(',')
 
     def get_curr_state(self):
         return self.__curr_state
@@ -35,4 +33,4 @@ class transition:
         return 0
     
     def print(self):
-        print(f"{self.__curr_state}, {self.__curr_symbol} -> {self.__next_state}, {self.__write_symbol}, {self.__move_head}")
+        print(f"({self.__curr_state},{self.__curr_symbol})->({self.__next_state},{self.__write_symbol},{self.__move_head})")
