@@ -18,9 +18,10 @@ class reversible_turing_machine:
     #
     __transitions: array
     __input_tape: tape
+    __input_head: head
     __output_tape: tape
     __history_tape: tape
-    __head: head
+    __history_head: head
 
     def __init__(self, tm) -> None:
         self.__num_states = tm.get_num_states()
@@ -38,7 +39,8 @@ class reversible_turing_machine:
         self.__input_tape = tape(input_string)
         self.__output_tape = tape(empty_string)
         self.__history_tape = tape(empty_string)
-        self.__head = head()
+        self.__input_head = head()
+        self.__history_head = head()
 
     def __convert_quintuples_to_quadruples(self, quintuples):
         quadruples = []
@@ -62,19 +64,21 @@ class reversible_turing_machine:
 
         return quadruples
 
-    def execute(self):
+    def execute_stage_1(self):
+        res = ''
         while True:
-            # comment here for continuous execution
-            input("Enter for next step...")
+            # input("Enter for next step...")
 
             curr_state = self.__curr_state
-            head_position = self.__head.get_position()
+            head_position = self.__input_head.get_position()
             if (curr_state == self.__accept_state):
+                res = "aceito"
                 break
             if (head_position >= self.__input_tape.get_size()):
-                return "acabou a fita"
+                res = "acabou a fita"
+                break
             curr_symbol = self.__input_tape.read_symbol(head_position)
-            print(f"estado atual: {curr_state}, simbolo atual: {curr_symbol}, posição atual: {head_position}")
+            # print(f"estado atual: {curr_state}, simbolo atual: {curr_symbol}, posição atual: {head_position}")
             
             # find transition
             res = list(filter(
@@ -85,22 +89,71 @@ class reversible_turing_machine:
                 self.__transitions
             ))
             if len(res) == 0:
-                return "estado não existe"
+                res = "estado não existe"
+                break
             curr_transition = res[0]
-            print(f"transição atual: {curr_transition}")
-            # curr_transition.print()
+            # print(f"transição atual: {curr_transition}")
             # write tape
             if curr_transition.get_write_symbol() != '/':
                 self.__input_tape.write_symbol(head_position, curr_transition.get_write_symbol())
+                self.__history_tape.write_symbol(self.__history_head.get_position(), curr_transition.get_next_state())
+                self.__history_head.move(1)
             
             # move head
-            self.__head.move(curr_transition.get_move_head())
+            self.__input_head.move(curr_transition.get_move_head())
             # change state
             self.__curr_state = curr_transition.get_next_state()
             # current tape status
-            print(self.__input_tape)
+            # print(self.__input_tape)
 
-        return "aceito"
+        print(res)
+        return res
+
+    # copy the result to the output tape
+    def execute_stage_2(self):
+        for i in range(self.__input_tape.get_size()):
+            self.__output_tape.write_symbol(i, self.__input_tape.read_symbol(i))
+
+    def execute_stage_3(self):
+        while (self.__history_head.get_position() >= 0):
+            self.__history_tape.write_symbol(self.__history_head.get_position(), '')
+            self.__history_head.move(-1)
+            curr_state = self.__history_tape.read_symbol(self.__history_head.get_position())
+            res = list(filter(
+                lambda t:
+                    t.get_curr_state() == curr_state,
+                self.__transitions
+            ))
+            if len(res) == 0:
+                res = "estado não existe"
+                break
+            curr_transition = res[0]
+            move_head = curr_transition.get_move_head() * -1
+            write_symbol = curr_transition.get_curr_state()[3]
+            self.__input_head.move(move_head)
+            self.__input_tape.write_symbol(self.__input_head.get_position(), write_symbol)
+
+
+    def execute(self):
+        print("beginning...")
+        print("Input tape: ", self.__input_tape)
+        print("History tape", self.__history_tape)
+        print("Output tape", self.__output_tape)
+        self.execute_stage_1()
+        print("finished stage 1...")
+        print("Input tape: ", self.__input_tape)
+        print("History tape", self.__history_tape)
+        print("Output tape", self.__output_tape)
+        self.execute_stage_2()
+        print("finished stage 2...")
+        print("Input tape: ", self.__input_tape)
+        print("History tape", self.__history_tape)
+        print("Output tape", self.__output_tape)
+        self.execute_stage_3()
+        print("finished stage 3...")
+        print("Input tape: ", self.__input_tape)
+        print("History tape", self.__history_tape)
+        print("Output tape", self.__output_tape)
 
     def print(self):
         print(f"num states: {self.__num_states}")

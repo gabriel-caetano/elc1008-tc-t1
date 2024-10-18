@@ -12,6 +12,9 @@ class tape:
         return self.__size
     
     def write_symbol(self, index, symbol):
+        if (index >= self.__size):
+            self.__tape = self.__tape + ['' for _ in range(index - self.__size + 1)]
+            self.__size = index
         self.__tape[index] = symbol
 
     def getString(self):

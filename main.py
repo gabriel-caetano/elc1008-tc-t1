@@ -7,7 +7,7 @@ def main():
     # print(rtm)
     # print(tm.execute())
     # print('##### end of tm #####')
-    print(rtm.execute())
+    rtm.execute()
 
 
 if __name__ == "__main__":
