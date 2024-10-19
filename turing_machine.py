@@ -2,8 +2,12 @@ from array import array
 from head import head
 from tape import tape
 from transition import transition
+from enum import Enum
+
+EXECUTION_MODE = Enum('EXECUTION_MODE', ['STRAIGHT', 'STEP_BY_STEP'])
 
 class turing_machine:
+    __exec_mode: Enum
     __file_name: str = ''
     #
     __num_states: int
@@ -26,7 +30,14 @@ class turing_machine:
         self.__file_name = file_name
         self.__head = head()
         self.load_file()
+        print('carregou maquina de turing')
+        print(self)
+        self.__exec_mode = EXECUTION_MODE.STRAIGHT
         
+    def restart(self):
+        self.__head = head()
+        self.load_file()
+        self.__exec_mode = EXECUTION_MODE.STRAIGHT
 
     def set_num_states(self, val):
         self.__num_states = val
@@ -127,55 +138,63 @@ class turing_machine:
         pass
 
     def load_file(self):
-        print("opening... " + self.__file_name)
         with open(self.__file_name, 'r') as file:
             self.__load_file_header(file)
             self.__load_file_transitions(file)
             self.__load_input(file)
 
     def execute(self):
-        while True:
-            # comment here for continuous execution
-            input("Enter for next step...")
-            
+        print('Iniciando...')
+        print('Fita de entrada: ', self.__input_tape)
+        # select execution mode
+        selected_mode = input('Deseja executar passo a passo? [s/n]')
+        if (selected_mode == 's'):
+            self.__exec_mode = EXECUTION_MODE.STEP_BY_STEP
+
+        while True:            
             curr_state = self.__curr_state
             head_position = self.__head.get_position()
             if (curr_state == self.__accept_state):
+                print('Palavra aceita')
                 break
             if (head_position >= self.__input_tape.get_size()):
-                return "acabou a fita"
+                print('Acabou a fita')
+                break
             curr_symbol = self.__input_tape.read_symbol(head_position)
-            print(f"estado atual: {curr_state}, simbolo atual: {curr_symbol}, posição atual: {head_position}")
             curr_transition = list(filter(
                 lambda trans:
                     trans.get_curr_state() == curr_state and
                     trans.get_curr_symbol() == curr_symbol,
                 self.__transitions
             ))[0]
-            print(f"transição atual:")
             if not curr_transition:
-                return "estado não existe"
+                print('Estado não existe')
+                break
+
+            if (self.__exec_mode == EXECUTION_MODE.STEP_BY_STEP):
+                input('Enter para o proximo passo...')
+                print(f'Estado atual: {curr_state}, simbolo atual: {curr_symbol}, posicao atual: {head_position}')
+                print('Transição atual:')
+                print(curr_transition)
+                print('Estado atual da fita:')
+                print(self.__input_tape)
+            
             self.__input_tape.write_symbol(head_position, curr_transition.get_write_symbol())
             self.__head.move(curr_transition.get_move_head())
             self.__curr_state = curr_transition.get_next_state()
-            print(self.__input_tape)
 
+        print('Estado atual da fita: ', self.__input_tape)
     
-        return "aceito"
 
     def __str__(self):
-        res = f"""num states: {self.__num_states}
-num input symbol: {self.__num_input_symbols}
-num tape symbols: {self.__num_tape_symbols}
-num transitions: {self.__num_transitions}
-states: {self.__states}
-input alphabet: {self.__input_alphabet}
-tape alphabet: {self.__output_alphabet}
-transitions: [
-"""
+        res = f'''Estados: {self.__states}
+Alfabeto de entrada: {self.__input_alphabet}
+Alfabeto da fita: {self.__output_alphabet}
+Transicoes: [
+'''
         for t in self.__transitions:
-            res = res + f"  {t.__str__()},\n"
+            res = res + f'  {t.__str__()},\n'
 
-        res = res + f"""]
-input tape: {self.__input_tape}"""
+        res = res + f''']
+Entrada: {self.__input_tape}'''
         return res

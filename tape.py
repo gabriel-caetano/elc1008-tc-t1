@@ -21,4 +21,4 @@ class tape:
         return ''.join(self.__tape)
     
     def __str__(self):
-        return f"{self.__tape}"
+        return f'{self.__tape}'
